@@ -6,6 +6,7 @@ import { MainLayout } from '@/components/layout/MainLayout'
 
 // Pages
 import Index from '@/pages/Index'
+import Explore from '@/pages/Explore'
 import { CreatorProfile } from '@/pages/CreatorProfile'
 import { Login } from '@/pages/Login'
 import { Signup } from '@/pages/Signup'
@@ -32,6 +33,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<MainLayout><Index /></MainLayout>} />
+            <Route path="/explore" element={<MainLayout><Explore /></MainLayout>} />
             <Route path="/creator/:username" element={<CreatorProfile />} />
             <Route path="/@:username" element={<CreatorProfile />} />
             <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
