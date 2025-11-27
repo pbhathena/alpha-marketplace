@@ -16,24 +16,56 @@
     --alpha-light: #fafafa;
 
     /* Backgrounds */
-    --background: #0d0d0d;
+    --background: 0 0% 5%;
     --background-light: #1a1a1a;
     --background-lighter: #262626;
     --background-card: #1f1f1f;
+
+    /* Foreground */
+    --foreground: 0 0% 100%;
 
     /* Surface */
     --surface: #1a1a1a;
     --surface-light: #262626;
     --surface-hover: #2a2a2a;
 
-    /* Text */
-    --text-primary: #ffffff;
-    --text-secondary: #a3a3a3;
-    --text-muted: #737373;
+    /* Card */
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 100%;
+
+    /* Popover */
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
+
+    /* Primary - Alpha Red */
+    --primary: 352 94% 36%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary */
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted */
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 64%;
+
+    /* Accent */
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Destructive */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
     /* Borders */
-    --border: #333333;
+    --border: 0 0% 20%;
     --border-light: #404040;
+
+    /* Input */
+    --input: 0 0% 20%;
+
+    /* Ring */
+    --ring: 352 94% 36%;
 
     /* Status */
     --success: #22c55e;

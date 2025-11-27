@@ -22,14 +22,14 @@ export function CreatorCard({ creator, username }: CreatorCardProps) {
     .toUpperCase()
     .slice(0, 2)
 
-  // Generate a consistent gradient based on the creator ID
+  // Generate a consistent gradient based on the creator ID - Alpha red theme
   const gradientIndex = parseInt(creator.id.slice(0, 8), 16) % 5
   const gradients = [
-    'bg-gradient-to-br from-purple-500 to-pink-500',
-    'bg-gradient-to-br from-blue-500 to-cyan-500',
-    'bg-gradient-to-br from-green-500 to-emerald-500',
-    'bg-gradient-to-br from-orange-500 to-red-500',
-    'bg-gradient-to-br from-indigo-500 to-purple-500',
+    'bg-gradient-to-br from-primary to-primary-light',
+    'bg-gradient-to-br from-primary-dark to-primary',
+    'bg-gradient-to-br from-primary/80 to-primary-light',
+    'bg-gradient-to-br from-primary to-alpha-accent',
+    'bg-gradient-to-br from-primary-dark to-primary-light',
   ]
 
   return (

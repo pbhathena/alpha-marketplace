@@ -6,56 +6,72 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
     extend: {
       colors: {
         // Alpha Brand Colors - RED theme
         alpha: {
-          primary: '#AE0721',      // Alpha Red - primary brand
-          secondary: '#ce4c47',    // Lighter red
-          accent: '#ff6b6b',       // Accent red
-          dark: '#1a1a1a',         // Near black
-          darker: '#0d0d0d',       // Darker black
-          light: '#fafafa',        // Off-white
+          primary: '#AE0721',
+          secondary: '#ce4c47',
+          accent: '#ff6b6b',
+          dark: '#1a1a1a',
+          darker: '#0d0d0d',
+          light: '#fafafa',
         },
-        // Semantic colors
+        // shadcn/ui CSS variable colors
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: '#AE0721',
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
           dark: '#8a0519',
           light: '#ce4c47',
-          50: '#fef2f2',
-          100: '#fee2e2',
-          200: '#fecaca',
-          300: '#fca5a5',
-          400: '#f87171',
-          500: '#ef4444',
-          600: '#dc2626',
-          700: '#AE0721',
-          800: '#8a0519',
-          900: '#6b0414',
         },
-        // UI Colors - Dark theme
-        background: {
-          DEFAULT: '#0d0d0d',
-          light: '#1a1a1a',
-          lighter: '#262626',
-          card: '#1f1f1f',
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        // Additional UI colors
+        'background-light': '#1a1a1a',
+        'background-lighter': '#262626',
+        'background-card': '#1f1f1f',
         surface: {
           DEFAULT: '#1a1a1a',
           light: '#262626',
           hover: '#2a2a2a',
         },
-        border: {
-          DEFAULT: '#333333',
-          light: '#404040',
-        },
-        // Text colors
-        foreground: {
-          DEFAULT: '#ffffff',
-          muted: '#a3a3a3',
-          subtle: '#737373',
-        },
-        // Status colors
+        'foreground-muted': '#a3a3a3',
+        'foreground-subtle': '#737373',
+        'border-light': '#404040',
         success: '#22c55e',
         warning: '#f59e0b',
         error: '#ef4444',
@@ -73,6 +89,11 @@ export default {
       boxShadow: {
         'glow': '0 0 20px rgba(174, 7, 33, 0.3)',
         'glow-lg': '0 0 40px rgba(174, 7, 33, 0.4)',
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',

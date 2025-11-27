@@ -35,7 +35,7 @@ export function ProfileHeader({ creator, isSubscribed, onSubscriptionChange }: P
   return (
     <div className="w-full">
       {/* Banner */}
-      <div className="relative h-48 md:h-64 w-full bg-gradient-to-r from-blue-500 to-purple-600">
+      <div className="relative h-48 md:h-64 w-full bg-gradient-to-r from-primary to-primary-light">
         {creator_profile.banner_url ? (
           <img
             src={creator_profile.banner_url}
@@ -43,7 +43,7 @@ export function ProfileHeader({ creator, isSubscribed, onSubscriptionChange }: P
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="h-full w-full bg-gradient-to-r from-blue-500 to-purple-600" />
+          <div className="h-full w-full bg-gradient-to-r from-primary to-primary-light" />
         )}
       </div>
 
