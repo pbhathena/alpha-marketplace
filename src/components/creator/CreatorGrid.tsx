@@ -91,9 +91,11 @@ export function CreatorGrid({ creators, loading = false }: CreatorGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {creators.map((creator) => {
-        // Extract username from email or use a fallback
+        // Use username field, fallback to email prefix, then ID
         const username =
-          creator.profiles.email?.split('@')[0] || creator.id.slice(0, 8)
+          creator.profiles.username ||
+          creator.profiles.email?.split('@')[0] ||
+          creator.id.slice(0, 8)
         return <CreatorCard key={creator.id} creator={creator} username={username} />
       })}
     </div>

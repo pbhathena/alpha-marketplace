@@ -54,8 +54,8 @@ export function LoginForm() {
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              type="email"
-              placeholder="you@example.com"
+              type="text"
+              placeholder="you@example.com or 'demo'"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -74,6 +74,10 @@ export function LoginForm() {
               required
               disabled={isLoading}
             />
+          </div>
+
+          <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
+            Demo access: use <span className="font-mono text-primary">demo</span> / <span className="font-mono text-primary">demo</span>
           </div>
         </CardContent>
 

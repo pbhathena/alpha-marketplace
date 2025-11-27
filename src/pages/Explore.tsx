@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowUpDown } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { CreatorProfile, Profile, Category } from '@/types/database'
+import { DEMO_CREATORS } from '@/data/demoContent'
 
 type SortOption = 'popular' | 'newest' | 'price_low' | 'price_high'
 
@@ -28,7 +29,39 @@ export default function Explore() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<SortOption>('popular')
 
-  const { data: creators, isLoading } = useQuery({
+  // Create demo creators data for display
+  const demoCreatorsForGrid = useMemo(() => {
+    return Object.values(DEMO_CREATORS).map((creator) => ({
+      id: creator.id,
+      user_id: creator.id,
+      bio: creator.bio,
+      tagline: creator.tagline,
+      banner_url: creator.banner_url,
+      category_id: null,
+      subscription_price_cents: creator.subscription_price_cents,
+      stripe_account_id: null,
+      stripe_onboarding_complete: false,
+      subscriber_count: creator.subscriber_count,
+      is_featured: true,
+      is_active: true,
+      social_links: {},
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      profiles: {
+        id: creator.id,
+        email: creator.email,
+        full_name: creator.full_name,
+        username: creator.username,
+        avatar_url: creator.avatar_url,
+        role: 'creator' as const,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      category: undefined,
+    }))
+  }, [])
+
+  const { data: dbCreators, isLoading } = useQuery({
     queryKey: ['creators', searchQuery, selectedCategory, sortBy],
     queryFn: async () => {
       let query = supabase
@@ -39,6 +72,7 @@ export default function Explore() {
             id,
             email,
             full_name,
+            username,
             avatar_url
           ),
           categories!creator_profiles_category_id_fkey(
@@ -82,6 +116,39 @@ export default function Explore() {
       >
     },
   })
+
+  // Combine demo creators with database creators, avoiding duplicates
+  const creators = useMemo(() => {
+    const dbResults = dbCreators || []
+    const dbIds = new Set(dbResults.map(c => c.user_id))
+
+    // Filter demo creators by search query if present
+    let filteredDemoCreators = demoCreatorsForGrid
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase()
+      filteredDemoCreators = demoCreatorsForGrid.filter(c =>
+        c.bio?.toLowerCase().includes(query) ||
+        c.tagline?.toLowerCase().includes(query) ||
+        c.profiles.full_name?.toLowerCase().includes(query)
+      )
+    }
+
+    // Add demo creators that aren't already in DB results
+    const demoToAdd = filteredDemoCreators.filter(c => !dbIds.has(c.user_id))
+
+    // Combine and sort
+    const combined = [...demoToAdd, ...dbResults]
+
+    // Apply sorting
+    const sort = sortOptions[sortBy]
+    combined.sort((a, b) => {
+      const aVal = a[sort.column as keyof typeof a] as number
+      const bVal = b[sort.column as keyof typeof b] as number
+      return sort.ascending ? aVal - bVal : bVal - aVal
+    })
+
+    return combined
+  }, [dbCreators, demoCreatorsForGrid, searchQuery, sortBy])
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query)

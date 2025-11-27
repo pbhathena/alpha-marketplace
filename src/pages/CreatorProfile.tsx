@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { ProfileHeader } from '@/components/creator/ProfileHeader'
@@ -7,9 +7,10 @@ import { supabase } from '@/integrations/supabase/client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Spinner } from '@/components/ui/spinner'
-import { AlertCircle, Lock } from 'lucide-react'
+import { AlertCircle, Lock, Play } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import type { Profile, CreatorProfile as CreatorProfileType, Post } from '@/types/database'
+import { isDemoCreator, getDemoCreatorProfile, getDemoPostsByCreator } from '@/data/demoContent'
 
 type CreatorWithProfile = Profile & {
   creator_profile: CreatorProfileType
@@ -17,13 +18,32 @@ type CreatorWithProfile = Profile & {
 
 export function CreatorProfile() {
   const { username } = useParams<{ username: string }>()
-  const { user } = useAuth()
+  const { user, isDemoMode } = useAuth()
+
+  // Check if this is a demo creator
+  const isViewingDemoCreator = username ? isDemoCreator(username) : false
+
+  // Debug logging
+  console.log('CreatorProfile Debug:', { username, isViewingDemoCreator, isDemoMode })
 
   // Fetch creator by username
   const { data: creator, isLoading: isLoadingCreator, error: creatorError } = useQuery<CreatorWithProfile | null>({
-    queryKey: ['creator', username],
+    queryKey: ['creator', username, isViewingDemoCreator],
     queryFn: async (): Promise<CreatorWithProfile | null> => {
       if (!username) throw new Error('Username is required')
+
+      // If viewing a demo creator, return demo data
+      if (isViewingDemoCreator) {
+        const demoData = getDemoCreatorProfile(username)
+        console.log('Demo data lookup:', { username, demoData })
+        if (demoData) {
+          return {
+            ...demoData.profile,
+            creator_profile: demoData.creatorProfile,
+          } as CreatorWithProfile
+        }
+        return null
+      }
 
       // First, find the profile by username (or full_name if username is not set)
       const { data: profiles, error: profileError } = await supabase
@@ -78,11 +98,17 @@ export function CreatorProfile() {
 
   // Fetch creator's posts
   const { data: posts, isLoading: isLoadingPosts, refetch: refetchPosts } = useQuery({
-    queryKey: ['creator-posts', creator?.id, !!subscription],
+    queryKey: ['creator-posts', creator?.id, !!subscription, isViewingDemoCreator, isDemoMode],
     queryFn: async () => {
       if (!creator) return []
 
-      const isSubscribed = !!subscription
+      // For demo creators, always show as subscribed in demo mode
+      const isSubscribed = isViewingDemoCreator ? isDemoMode : !!subscription
+
+      // If viewing a demo creator, return demo posts
+      if (isViewingDemoCreator && username) {
+        return getDemoPostsByCreator(username, isSubscribed)
+      }
 
       let query = supabase
         .from('posts')
@@ -104,8 +130,9 @@ export function CreatorProfile() {
     enabled: !!creator,
   })
 
-  const isSubscribed = !!subscription
-  const isLoading = isLoadingCreator || isLoadingSubscription
+  // For demo creators in demo mode, treat as subscribed
+  const isSubscribed = isViewingDemoCreator ? isDemoMode : !!subscription
+  const isLoading = isLoadingCreator || (isViewingDemoCreator ? false : isLoadingSubscription)
 
   // Loading state
   if (isLoading) {
@@ -183,32 +210,58 @@ export function CreatorProfile() {
               ) : posts && posts.length > 0 ? (
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {posts.map((post) => (
-                    <Card key={post.id} className="overflow-hidden">
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <CardTitle className="text-lg line-clamp-2">{post.title}</CardTitle>
+                    <Link key={post.id} to={`/creator/${username}/post/${post.id}`}>
+                      <Card className="overflow-hidden hover:ring-2 hover:ring-primary/50 transition-all cursor-pointer group">
+                        {/* Video thumbnail */}
+                        <div className="relative aspect-video bg-gradient-to-br from-gray-800 to-gray-900">
+                          {post.media_urls && post.media_urls.length > 0 ? (
+                            <img
+                              src={post.media_urls[0]}
+                              alt={post.title || 'Post thumbnail'}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <div className="text-4xl font-bold text-white/20">{post.title?.[0] || 'A'}</div>
+                            </div>
+                          )}
+                          {/* Play button overlay */}
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/20 transition-colors">
+                            <div className="rounded-full bg-primary/90 p-3 transform group-hover:scale-110 transition-transform">
+                              <Play className="h-6 w-6 text-white fill-white" />
+                            </div>
+                          </div>
+                          {/* Duration placeholder */}
+                          <div className="absolute bottom-2 right-2 bg-black/80 px-1.5 py-0.5 rounded text-xs text-white">
+                            {post.visibility !== 'public' ? '8:32' : '5:17'}
+                          </div>
+                          {/* Lock icon for subscriber-only */}
                           {post.visibility !== 'public' && (
-                            <Lock className="h-4 w-4 text-muted-foreground flex-shrink-0 ml-2" />
+                            <div className="absolute top-2 right-2 bg-primary/90 p-1.5 rounded-full">
+                              <Lock className="h-3 w-3 text-white" />
+                            </div>
                           )}
                         </div>
-                        <CardDescription>
-                          {new Date(post.published_at || post.created_at).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                          })}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground line-clamp-3">
-                          {post.content ? `${post.content.substring(0, 150)}...` : 'No content'}
-                        </p>
-                        <div className="mt-4 flex gap-4 text-sm text-muted-foreground">
-                          <span>{post.like_count} likes</span>
-                          <span>{post.comment_count} comments</span>
-                        </div>
-                      </CardContent>
-                    </Card>
+                        <CardHeader className="p-4 pb-2">
+                          <CardTitle className="text-base line-clamp-2 group-hover:text-primary transition-colors">
+                            {post.title}
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            {new Date(post.published_at || post.created_at).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="px-4 pb-4 pt-0">
+                          <div className="flex gap-4 text-xs text-muted-foreground">
+                            <span>{post.like_count} likes</span>
+                            <span>{post.comment_count} comments</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
                   ))}
                 </div>
               ) : (

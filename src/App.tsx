@@ -8,6 +8,7 @@ import { MainLayout } from '@/components/layout/MainLayout'
 import Index from '@/pages/Index'
 import Explore from '@/pages/Explore'
 import { CreatorProfile } from '@/pages/CreatorProfile'
+import { PostDetail } from '@/pages/PostDetail'
 import { Login } from '@/pages/Login'
 import { Signup } from '@/pages/Signup'
 import BecomeCreator from '@/pages/BecomeCreator'
@@ -35,6 +36,7 @@ function App() {
             <Route path="/" element={<MainLayout><Index /></MainLayout>} />
             <Route path="/explore" element={<MainLayout><Explore /></MainLayout>} />
             <Route path="/creator/:username" element={<CreatorProfile />} />
+            <Route path="/creator/:username/post/:postId" element={<PostDetail />} />
             <Route path="/@:username" element={<CreatorProfile />} />
             <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
             <Route path="/signup" element={<MainLayout><Signup /></MainLayout>} />

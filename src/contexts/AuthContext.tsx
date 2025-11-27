@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session, AuthError } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import type { Profile, CreatorProfile } from '@/types/database'
+import { DEMO_CREATORS } from '@/data/demoContent'
 
 interface AuthContextType {
   user: User | null
@@ -11,6 +12,8 @@ interface AuthContextType {
   isLoading: boolean
   isCreator: boolean
   isAdmin: boolean
+  isDemoMode: boolean
+  demoCreators: typeof DEMO_CREATORS | null
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: AuthError | null }>
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
@@ -25,8 +28,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [creatorProfile, setCreatorProfile] = useState<CreatorProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isDemoMode, setIsDemoMode] = useState(false)
+  const [demoCreators, setDemoCreators] = useState<typeof DEMO_CREATORS | null>(null)
 
-  const isCreator = profile?.role === 'creator'
+  const isCreator = profile?.role === 'creator' || isDemoMode
   const isAdmin = profile?.role === 'admin'
 
   // Fetch user profile
@@ -39,10 +44,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .single()
 
       if (error) throw error
-      setProfile(data)
+      const profileData = data as Profile
+      setProfile(profileData)
 
       // If user is a creator, fetch creator profile
-      if (data?.role === 'creator') {
+      if (profileData?.role === 'creator') {
         await fetchCreatorProfile(userId)
       }
     } catch (error) {
@@ -99,6 +105,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Sign in
   const signIn = async (email: string, password: string) => {
+    // Check for demo login
+    if (email.toLowerCase() === 'demo' && password === 'demo') {
+      // Set demo mode with both creators
+      setIsDemoMode(true)
+      setDemoCreators(DEMO_CREATORS)
+
+      // Create a mock profile for Mike Davies (primary demo user)
+      const mikeData = DEMO_CREATORS.mikedavies
+      const mockProfile: Profile = {
+        id: mikeData.id,
+        email: mikeData.email,
+        full_name: mikeData.full_name,
+        username: mikeData.username,
+        avatar_url: mikeData.avatar_url,
+        role: 'creator',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+
+      const mockCreatorProfile: CreatorProfile = {
+        id: mikeData.id,
+        user_id: mikeData.id,
+        bio: mikeData.bio,
+        tagline: mikeData.tagline,
+        banner_url: mikeData.banner_url,
+        category_id: null,
+        subscription_price_cents: mikeData.subscription_price_cents,
+        stripe_account_id: null,
+        stripe_onboarding_complete: false,
+        subscriber_count: mikeData.subscriber_count,
+        is_featured: true,
+        is_active: true,
+        social_links: {
+          instagram: 'https://instagram.com/mikedaviesfitness',
+          youtube: 'https://youtube.com/@mikedaviesfitness',
+          website: 'https://iamanalpha.com'
+        },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+
+      // Create a mock user object
+      const mockUser = {
+        id: mikeData.id,
+        email: mikeData.email,
+        app_metadata: {},
+        user_metadata: { full_name: mikeData.full_name },
+        aud: 'authenticated',
+        created_at: new Date().toISOString(),
+      } as unknown as User
+
+      setUser(mockUser)
+      setProfile(mockProfile)
+      setCreatorProfile(mockCreatorProfile)
+      setIsLoading(false)
+
+      return { error: null }
+    }
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -113,11 +178,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Sign out
   const signOut = async () => {
-    await supabase.auth.signOut()
+    if (!isDemoMode) {
+      await supabase.auth.signOut()
+    }
     setUser(null)
     setSession(null)
     setProfile(null)
     setCreatorProfile(null)
+    setIsDemoMode(false)
+    setDemoCreators(null)
   }
 
   // Initialize auth state and listen for changes
@@ -161,6 +230,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     isCreator,
     isAdmin,
+    isDemoMode,
+    demoCreators,
     signUp,
     signIn,
     signOut,
