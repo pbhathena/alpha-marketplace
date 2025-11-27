@@ -8,7 +8,9 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "migrate:legacy": "npx tsx scripts/legacy-api-migration.ts",
+    "seed:creators": "npx tsx scripts/seed-alpha-creators.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",
