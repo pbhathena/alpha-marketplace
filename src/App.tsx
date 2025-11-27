@@ -1,41 +1,52 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from 'sonner'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { MainLayout } from '@/components/layout/MainLayout'
 
-function Home() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="max-w-4xl w-full bg-white rounded-2xl shadow-xl p-8 md:p-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Welcome to Alpha Marketplace
-        </h1>
-        <p className="text-xl text-gray-600 mb-8">
-          A modern marketplace platform built with React, TypeScript, and Tailwind CSS
-        </p>
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-blue-50 rounded-lg p-6">
-            <h3 className="font-semibold text-lg mb-2 text-blue-900">Fast</h3>
-            <p className="text-gray-700">Built with Vite for lightning-fast development</p>
-          </div>
-          <div className="bg-indigo-50 rounded-lg p-6">
-            <h3 className="font-semibold text-lg mb-2 text-indigo-900">Type-Safe</h3>
-            <p className="text-gray-700">TypeScript ensures code reliability</p>
-          </div>
-          <div className="bg-purple-50 rounded-lg p-6">
-            <h3 className="font-semibold text-lg mb-2 text-purple-900">Beautiful</h3>
-            <p className="text-gray-700">Styled with Tailwind CSS</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+// Pages
+import Index from '@/pages/Index'
+import { CreatorProfile } from '@/pages/CreatorProfile'
+import { Login } from '@/pages/Login'
+import { Signup } from '@/pages/Signup'
+import BecomeCreator from '@/pages/BecomeCreator'
+import CreatorDashboard from '@/pages/CreatorDashboard'
+import Overview from '@/pages/CreatorDashboard/Overview'
+import Settings from '@/pages/CreatorDashboard/Settings'
+import StripeSetup from '@/pages/CreatorDashboard/StripeSetup'
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </Router>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<MainLayout><Index /></MainLayout>} />
+            <Route path="/creator/:username" element={<CreatorProfile />} />
+            <Route path="/@:username" element={<CreatorProfile />} />
+            <Route path="/login" element={<MainLayout><Login /></MainLayout>} />
+            <Route path="/signup" element={<MainLayout><Signup /></MainLayout>} />
+            <Route path="/become-creator" element={<MainLayout><BecomeCreator /></MainLayout>} />
+            <Route path="/dashboard" element={<CreatorDashboard />}>
+              <Route index element={<Overview />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="stripe-setup" element={<StripeSetup />} />
+            </Route>
+          </Routes>
+        </Router>
+        <Toaster position="top-center" richColors />
+      </AuthProvider>
+    </QueryClientProvider>
   )
 }
 
