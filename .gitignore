@@ -34,3 +34,4 @@ build
 .cache
 .vercel
 .env*.local
+supabase/.temp/
