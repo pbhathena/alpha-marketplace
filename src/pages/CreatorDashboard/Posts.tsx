@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { CreatePostForm } from '@/components/feed/CreatePostForm'
 import { PostFeed } from '@/components/feed/PostFeed'
 import { usePosts, useDeletePost, PostWithCreator } from '@/hooks/usePosts'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
 import { PostVisibility } from '@/types/database'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {

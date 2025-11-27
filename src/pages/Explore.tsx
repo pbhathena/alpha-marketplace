@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { ArrowUpDown } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
 import { SearchBar } from '@/components/creator/SearchBar'
 import { CategoryFilter } from '@/components/creator/CategoryFilter'
 import { CreatorGrid } from '@/components/creator/CreatorGrid'
