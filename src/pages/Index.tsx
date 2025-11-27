@@ -1,9 +1,25 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRight, Play, Users, TrendingUp, Shield, Star, ChevronRight } from 'lucide-react'
+import { ArrowRight, Play, Users, TrendingUp, Shield, Star } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import type { Category } from '@/types/database'
+
+// Professional category images
+const categoryImages: Record<string, string> = {
+  fitness: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop',
+  bodybuilding: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&h=400&fit=crop',
+  nutrition: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=400&fit=crop',
+  business: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop',
+  lifestyle: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=600&h=400&fit=crop',
+  education: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&h=400&fit=crop',
+  sports: 'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=400&fit=crop',
+  creative: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&h=400&fit=crop',
+  mindset: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&h=400&fit=crop',
+  combat: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=600&h=400&fit=crop',
+  endurance: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=600&h=400&fit=crop',
+  recovery: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=400&fit=crop',
+}
 
 export default function Index() {
   // Fetch categories
@@ -143,14 +159,16 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {categoriesLoading ? (
               // Loading skeletons
               Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="category-card animate-pulse">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 mb-4" />
-                  <div className="h-5 bg-white/10 rounded w-3/4 mb-2" />
-                  <div className="h-4 bg-white/10 rounded w-full" />
+                <div key={i} className="rounded-2xl overflow-hidden bg-card animate-pulse">
+                  <div className="aspect-[4/3] bg-white/10" />
+                  <div className="p-4">
+                    <div className="h-5 bg-white/10 rounded w-3/4 mb-2" />
+                    <div className="h-4 bg-white/10 rounded w-full" />
+                  </div>
                 </div>
               ))
             ) : categories && categories.length > 0 ? (
@@ -158,16 +176,34 @@ export default function Index() {
                 <Link
                   key={category.id}
                   to={`/explore?category=${category.slug}`}
-                  className="group category-card"
+                  className="group relative rounded-2xl overflow-hidden bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-glow"
                 >
-                  <div className="text-4xl mb-4">{category.icon}</div>
-                  <h3 className="font-semibold text-white mb-1 group-hover:text-primary transition-colors">
-                    {category.name}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {category.description}
-                  </p>
-                  <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:text-primary transition-all" />
+                  {/* Category Image */}
+                  <div className="aspect-[4/3] relative overflow-hidden">
+                    <img
+                      src={categoryImages[category.slug] || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop'}
+                      alt={category.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                    {/* Category name overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 className="font-bold text-xl text-white group-hover:text-primary transition-colors">
+                        {category.name}
+                      </h3>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div className="p-4">
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {category.description}
+                    </p>
+                  </div>
+
+                  {/* Hover accent line */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-primary-light opacity-0 group-hover:opacity-100 transition-opacity" />
                 </Link>
               ))
             ) : (
