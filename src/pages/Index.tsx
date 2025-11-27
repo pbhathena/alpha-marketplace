@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowRight, CheckCircle2, DollarSign, Users, Zap } from 'lucide-react'
+import { ArrowRight, CheckCircle2, DollarSign, Users, Zap, Award, BookOpen, Heart } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { CreatorGrid } from '@/components/creator/CreatorGrid'
-import { Badge } from '@/components/ui/badge'
 import type { CreatorProfile, Profile, Category } from '@/types/database'
 
 export default function Index() {
@@ -65,34 +64,72 @@ export default function Index() {
   })
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/20 via-purple-500/10 to-pink-500/10">
-        <div className="container py-16 md:py-24 lg:py-32">
+    <div className="min-h-screen bg-background">
+      {/* Hero Section - Alpha Branded */}
+      <section className="relative overflow-hidden bg-alpha-gradient">
+        <div className="absolute inset-0 bg-[url('/alpha-pattern.svg')] opacity-5" />
+        <div className="container relative py-20 md:py-32 lg:py-40">
           <div className="max-w-4xl mx-auto text-center">
-            <Badge className="mb-4" variant="secondary">
-              The Creator Economy Platform
-            </Badge>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">
-              Support Creators.
-              <br />
-              Get Exclusive Content.
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+              <Award className="h-5 w-5 text-white" />
+              <span className="text-white/90 text-sm font-medium">The Platform for Coaches, Educators & Leaders</span>
+            </div>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white">
+              We Empower Alphas
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of fans supporting their favorite creators with
-              monthly subscriptions. Get access to exclusive content, behind-the-scenes
-              updates, and a direct connection to the creators you love.
+            <p className="text-lg md:text-xl text-white/80 mb-4 max-w-2xl mx-auto">
+              <strong className="text-white">An Alpha:</strong> One who coaches, educates, leads, and influences.
+            </p>
+            <p className="text-lg md:text-xl text-white/70 mb-8 max-w-2xl mx-auto">
+              Join the platform that helps influencers get rewarded for the value they provide their audience.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild>
+              <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90" asChild>
                 <Link to="/explore">
-                  Explore Creators
+                  Explore Alphas
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link to="/signup">Become a Creator</Link>
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" asChild>
+                <Link to="/become-creator">Become an Alpha</Link>
               </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What is Alpha Section */}
+      <section className="bg-background-light py-16 md:py-24">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8 text-center">
+              <div className="flex flex-col items-center">
+                <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center mb-4">
+                  <BookOpen className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-white">Educators</h3>
+                <p className="text-gray-400">
+                  Share your knowledge and expertise with a dedicated audience
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center mb-4">
+                  <Heart className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-white">Coaches</h3>
+                <p className="text-gray-400">
+                  Transform lives with personalized guidance and exclusive content
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="rounded-full bg-primary/10 w-16 h-16 flex items-center justify-center mb-4">
+                  <Users className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2 text-white">Leaders</h3>
+                <p className="text-gray-400">
+                  Build and engage your community with premium content
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -102,18 +139,18 @@ export default function Index() {
       {featuredCreators && featuredCreators.length > 0 && (
         <section className="container py-16 md:py-24">
           <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Featured Creators
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+              Featured Alphas
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Discover popular creators from our community
+            <p className="text-lg text-gray-400">
+              Discover top coaches, educators, and influencers from our community
             </p>
           </div>
           <CreatorGrid creators={featuredCreators} loading={loadingFeatured} />
           <div className="mt-12 text-center">
-            <Button size="lg" variant="outline" asChild>
+            <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white" asChild>
               <Link to="/explore">
-                View All Creators
+                View All Alphas
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
@@ -123,14 +160,14 @@ export default function Index() {
 
       {/* Categories Preview */}
       {categories && categories.length > 0 && (
-        <section className="bg-muted/50 py-16 md:py-24">
+        <section className="bg-background-light py-16 md:py-24">
           <div className="container">
             <div className="mb-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
                 Browse by Category
               </h2>
-              <p className="text-lg text-muted-foreground">
-                Find creators in your favorite niches
+              <p className="text-lg text-gray-400">
+                Find Alphas in your favorite niches
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -139,12 +176,12 @@ export default function Index() {
                   key={category.id}
                   to={`/explore?category=${category.slug}`}
                 >
-                  <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
+                  <Card className="bg-surface border-border hover:border-primary transition-all hover:scale-105 cursor-pointer">
                     <CardContent className="p-6 text-center">
                       {category.icon && (
                         <div className="text-4xl mb-2">{category.icon}</div>
                       )}
-                      <h3 className="font-semibold">{category.name}</h3>
+                      <h3 className="font-semibold text-white">{category.name}</h3>
                     </CardContent>
                   </Card>
                 </Link>
@@ -157,45 +194,45 @@ export default function Index() {
       {/* How It Works */}
       <section className="container py-16 md:py-24">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
-          <p className="text-lg text-muted-foreground">
-            Supporting creators is simple and rewarding
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">How It Works</h2>
+          <p className="text-lg text-gray-400">
+            Supporting Alphas is simple and rewarding
           </p>
         </div>
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <Card>
+          <Card className="bg-surface border-border">
             <CardContent className="pt-6">
               <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                 <Users className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">1. Find Creators</h3>
-              <p className="text-muted-foreground">
-                Browse through our community of talented creators across
-                various categories and find those you want to support.
+              <h3 className="text-xl font-semibold mb-2 text-white">1. Find Your Alpha</h3>
+              <p className="text-gray-400">
+                Browse through our community of coaches, educators, and leaders
+                across various categories.
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-surface border-border">
             <CardContent className="pt-6">
               <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                 <DollarSign className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">2. Subscribe</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-white">2. Subscribe</h3>
+              <p className="text-gray-400">
                 Choose a monthly subscription plan that works for you. Cancel
                 anytime, no strings attached.
               </p>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="bg-surface border-border">
             <CardContent className="pt-6">
               <div className="rounded-full bg-primary/10 w-12 h-12 flex items-center justify-center mb-4">
                 <Zap className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">3. Get Access</h3>
-              <p className="text-muted-foreground">
-                Enjoy exclusive content, early access, behind-the-scenes
-                updates, and direct interaction with creators.
+              <h3 className="text-xl font-semibold mb-2 text-white">3. Get Exclusive Access</h3>
+              <p className="text-gray-400">
+                Enjoy exclusive content, resources, Q&A sessions, and direct
+                interaction with your Alpha.
               </p>
             </CardContent>
           </Card>
@@ -203,54 +240,74 @@ export default function Index() {
       </section>
 
       {/* CTA for Creators */}
-      <section className="bg-gradient-to-br from-primary to-purple-600 text-primary-foreground">
+      <section className="bg-alpha-gradient">
         <div className="container py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
-              Ready to Monetize Your Content?
+            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">
+              Ready to Become an Alpha?
             </h2>
-            <p className="text-lg md:text-xl mb-8 opacity-90">
-              Join Alpha Marketplace and start earning from your most dedicated
-              fans. We provide the tools, you create the content.
+            <p className="text-lg md:text-xl mb-8 text-white/80">
+              Join the platform that empowers coaches, educators, and influencers
+              to monetize their expertise and build their audience.
             </p>
             <div className="grid sm:grid-cols-3 gap-6 mb-8">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 shrink-0 mt-0.5" />
+                <CheckCircle2 className="h-6 w-6 shrink-0 mt-0.5 text-white" />
                 <div className="text-left">
-                  <h4 className="font-semibold mb-1">Keep 90%</h4>
-                  <p className="text-sm opacity-80">
-                    Industry-leading revenue share
+                  <h4 className="font-semibold mb-1 text-white">Keep 80%</h4>
+                  <p className="text-sm text-white/70">
+                    Competitive revenue share
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 shrink-0 mt-0.5" />
+                <CheckCircle2 className="h-6 w-6 shrink-0 mt-0.5 text-white" />
                 <div className="text-left">
-                  <h4 className="font-semibold mb-1">Easy Setup</h4>
-                  <p className="text-sm opacity-80">
+                  <h4 className="font-semibold mb-1 text-white">Easy Setup</h4>
+                  <p className="text-sm text-white/70">
                     Start in minutes, not days
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-6 w-6 shrink-0 mt-0.5" />
+                <CheckCircle2 className="h-6 w-6 shrink-0 mt-0.5 text-white" />
                 <div className="text-left">
-                  <h4 className="font-semibold mb-1">Full Control</h4>
-                  <p className="text-sm opacity-80">
+                  <h4 className="font-semibold mb-1 text-white">Full Control</h4>
+                  <p className="text-sm text-white/70">
                     You own your content and audience
                   </p>
                 </div>
               </div>
             </div>
-            <Button size="lg" variant="secondary" asChild>
-              <Link to="/creator/signup">
-                Become a Creator
+            <Button size="lg" className="bg-white text-primary hover:bg-white/90" asChild>
+              <Link to="/become-creator">
+                Become an Alpha
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-background border-t border-border py-12">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <img src="/alpha-logo-white.png" alt="Alpha" className="h-8" />
+              <span className="text-gray-400">We Empower Alphas</span>
+            </div>
+            <div className="flex items-center gap-6 text-sm text-gray-400">
+              <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
+              <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+              <Link to="/support" className="hover:text-white transition-colors">Support</Link>
+            </div>
+            <p className="text-sm text-gray-500">
+              © {new Date().getFullYear()} Alpha. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }

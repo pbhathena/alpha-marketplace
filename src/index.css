@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Alpha Brand Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Alpha Brand Color System */
+    --alpha-primary: #003087;
+    --alpha-secondary: #2b6ab6;
+    --alpha-accent: #5588c4;
+    --alpha-dark: #22242a;
+    --alpha-light: #fafafa;
+
+    /* Backgrounds */
+    --background: #22242a;
+    --background-light: #2d2f36;
+    --background-lighter: #3a3d45;
+
+    /* Surface */
+    --surface: #2d2f36;
+    --surface-light: #3a3d45;
+
+    /* Text */
+    --text-primary: #ffffff;
+    --text-secondary: #a7a7a7;
+    --text-muted: #707070;
+
+    /* Borders */
+    --border: #3a3d45;
+    --border-light: #4a4d55;
+
+    /* Status */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ce4c47;
+  }
+}
+
 @layer utilities {
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -10,17 +47,30 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Custom scrollbar for dark theme */
+  .scrollbar-dark::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-dark::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+  .scrollbar-dark::-webkit-scrollbar-thumb {
+    background: var(--surface-light);
+    border-radius: 4px;
+  }
+  .scrollbar-dark::-webkit-scrollbar-thumb:hover {
+    background: var(--alpha-secondary);
+  }
 }
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+/* Base styles */
+html {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -29,12 +79,57 @@
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--background);
+  color: var(--text-primary);
 }
 
 #root {
   width: 100%;
+  min-height: 100vh;
+}
+
+/* Alpha Button Styles */
+@layer components {
+  .btn-alpha {
+    @apply bg-primary text-white font-medium py-2 px-4 rounded-lg
+           transition-all duration-200 hover:bg-primary-light
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+           focus:ring-offset-background;
+  }
+
+  .btn-alpha-outline {
+    @apply border border-primary text-primary font-medium py-2 px-4 rounded-lg
+           transition-all duration-200 hover:bg-primary hover:text-white
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+           focus:ring-offset-background;
+  }
+
+  .card-alpha {
+    @apply bg-surface rounded-xl border border-border p-6;
+  }
+
+  .input-alpha {
+    @apply w-full bg-background-light border border-border rounded-lg px-4 py-3
+           text-white placeholder-text-muted
+           focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+}
+
+/* Gradient backgrounds */
+.bg-alpha-gradient {
+  background: linear-gradient(135deg, var(--alpha-primary) 0%, var(--alpha-secondary) 100%);
+}
+
+.bg-alpha-gradient-dark {
+  background: linear-gradient(180deg, var(--background) 0%, var(--background-light) 100%);
+}
+
+/* Text gradient */
+.text-alpha-gradient {
+  background: linear-gradient(135deg, var(--alpha-primary) 0%, var(--alpha-accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

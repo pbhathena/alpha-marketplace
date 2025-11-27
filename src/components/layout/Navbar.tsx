@@ -35,13 +35,12 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center px-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground font-bold">
-            A
-          </div>
-          <span className="hidden font-bold sm:inline-block">
-            Alpha Marketplace
-          </span>
+        <Link to="/" className="flex items-center">
+          <img
+            src="/alpha-logo-white.png"
+            alt="Alpha"
+            className="h-8 w-auto"
+          />
         </Link>
 
         {/* Desktop Navigation */}
