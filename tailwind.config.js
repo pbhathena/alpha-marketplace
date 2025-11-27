@@ -8,44 +8,86 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Alpha Brand Colors
+        // Alpha Brand Colors - RED theme
         alpha: {
-          primary: '#003087',      // Dark Blue - primary brand
-          secondary: '#2b6ab6',    // Medium Blue
-          accent: '#5588c4',       // Light Blue accent
-          dark: '#22242a',         // Near black
-          light: '#fafafa',        // Off-white background
+          primary: '#AE0721',      // Alpha Red - primary brand
+          secondary: '#ce4c47',    // Lighter red
+          accent: '#ff6b6b',       // Accent red
+          dark: '#1a1a1a',         // Near black
+          darker: '#0d0d0d',       // Darker black
+          light: '#fafafa',        // Off-white
         },
         // Semantic colors
         primary: {
-          DEFAULT: '#003087',
-          dark: '#002060',
-          light: '#2b6ab6',
+          DEFAULT: '#AE0721',
+          dark: '#8a0519',
+          light: '#ce4c47',
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#ef4444',
+          600: '#dc2626',
+          700: '#AE0721',
+          800: '#8a0519',
+          900: '#6b0414',
         },
-        secondary: {
-          DEFAULT: '#5588c4',
-          dark: '#3C77BD',
-          light: '#7aa5d4',
-        },
-        // UI Colors
+        // UI Colors - Dark theme
         background: {
-          DEFAULT: '#22242a',
-          light: '#2d2f36',
-          lighter: '#3a3d45',
+          DEFAULT: '#0d0d0d',
+          light: '#1a1a1a',
+          lighter: '#262626',
+          card: '#1f1f1f',
         },
         surface: {
-          DEFAULT: '#2d2f36',
-          light: '#3a3d45',
+          DEFAULT: '#1a1a1a',
+          light: '#262626',
+          hover: '#2a2a2a',
+        },
+        border: {
+          DEFAULT: '#333333',
+          light: '#404040',
+        },
+        // Text colors
+        foreground: {
+          DEFAULT: '#ffffff',
+          muted: '#a3a3a3',
+          subtle: '#737373',
         },
         // Status colors
-        success: '#10b981',
+        success: '#22c55e',
         warning: '#f59e0b',
-        error: '#ce4c47',
-        'error-dark': '#AE0721',
+        error: '#ef4444',
       },
       fontFamily: {
-        sans: ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
-        display: ['Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+        sans: ['Inter', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+        display: ['Inter', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'alpha-gradient': 'linear-gradient(135deg, #AE0721 0%, #ce4c47 50%, #8a0519 100%)',
+        'alpha-gradient-dark': 'linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%)',
+        'hero-pattern': "url('/hero-bg.jpg')",
+      },
+      boxShadow: {
+        'glow': '0 0 20px rgba(174, 7, 33, 0.3)',
+        'glow-lg': '0 0 40px rgba(174, 7, 33, 0.4)',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out',
+        'slide-up': 'slideUp 0.5s ease-out',
+        'pulse-slow': 'pulse 3s infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
     },
   },
