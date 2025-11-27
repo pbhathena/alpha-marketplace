@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Heart } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useLikePost } from '@/hooks/usePosts'
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
 import { cn } from '@/lib/utils'
 
 interface LikeButtonProps {
