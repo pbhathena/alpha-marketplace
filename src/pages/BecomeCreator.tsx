@@ -9,9 +9,17 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Loader2, AlertCircle } from 'lucide-react'
+import { Loader2, AlertCircle, Check, User, FileText, DollarSign, Image, CreditCard } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Category } from '@/types/database'
+
+const steps = [
+  { id: 1, name: 'Identity', icon: User, description: 'Username & profile' },
+  { id: 2, name: 'Content', icon: FileText, description: 'Bio & category' },
+  { id: 3, name: 'Pricing', icon: DollarSign, description: 'Subscription price' },
+  { id: 4, name: 'Branding', icon: Image, description: 'Avatar & banner' },
+  { id: 5, name: 'Payments', icon: CreditCard, description: 'Connect Stripe' },
+]
 
 interface FormData {
   username: string
@@ -255,13 +263,84 @@ export default function BecomeCreator() {
     )
   }
 
+  // Calculate current step based on filled data
+  const getCurrentStep = () => {
+    if (!formData.username) return 1
+    if (!formData.bio && !formData.categoryId) return 2
+    if (!formData.subscriptionPrice) return 3
+    return 4 // Ready to complete
+  }
+
+  const currentStep = getCurrentStep()
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-8 md:py-12 px-4">
+      <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-2">Become a Creator</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">Become a Creator</h1>
           <p className="text-muted-foreground">
             Start earning from your content and build your community
+          </p>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="mb-8 hidden md:block">
+          <div className="flex items-center justify-between">
+            {steps.map((step, idx) => {
+              const Icon = step.icon
+              const isCompleted = step.id < currentStep
+              const isCurrent = step.id === currentStep
+              const isLast = idx === steps.length - 1
+
+              return (
+                <div key={step.id} className="flex items-center flex-1">
+                  <div className="flex flex-col items-center">
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${
+                        isCompleted
+                          ? 'bg-primary border-primary text-primary-foreground'
+                          : isCurrent
+                          ? 'border-primary text-primary'
+                          : 'border-muted-foreground/30 text-muted-foreground/50'
+                      }`}
+                    >
+                      {isCompleted ? <Check className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
+                    </div>
+                    <span className={`text-xs mt-2 font-medium ${isCurrent ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {step.name}
+                    </span>
+                  </div>
+                  {!isLast && (
+                    <div
+                      className={`flex-1 h-0.5 mx-2 ${
+                        isCompleted ? 'bg-primary' : 'bg-muted-foreground/20'
+                      }`}
+                    />
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Mobile Step Indicator */}
+        <div className="mb-6 md:hidden">
+          <div className="flex items-center justify-center gap-2">
+            {steps.slice(0, 4).map((step) => (
+              <div
+                key={step.id}
+                className={`w-2 h-2 rounded-full ${
+                  step.id < currentStep
+                    ? 'bg-primary'
+                    : step.id === currentStep
+                    ? 'bg-primary/50'
+                    : 'bg-muted-foreground/20'
+                }`}
+              />
+            ))}
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-2">
+            Step {Math.min(currentStep, 4)} of 4: {steps[Math.min(currentStep - 1, 3)].description}
           </p>
         </div>
 

@@ -237,6 +237,76 @@ export type Database = {
           updated_at?: string
         }
       }
+      conversations: {
+        Row: {
+          id: string
+          creator_id: string
+          subscriber_id: string
+          last_message_at: string
+          last_message_preview: string | null
+          creator_unread_count: number
+          subscriber_unread_count: number
+          is_archived_by_creator: boolean
+          is_archived_by_subscriber: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          creator_id: string
+          subscriber_id: string
+          last_message_at?: string
+          last_message_preview?: string | null
+          creator_unread_count?: number
+          subscriber_unread_count?: number
+          is_archived_by_creator?: boolean
+          is_archived_by_subscriber?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          creator_id?: string
+          subscriber_id?: string
+          last_message_at?: string
+          last_message_preview?: string | null
+          creator_unread_count?: number
+          subscriber_unread_count?: number
+          is_archived_by_creator?: boolean
+          is_archived_by_subscriber?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      messages: {
+        Row: {
+          id: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          is_read: boolean
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          conversation_id: string
+          sender_id: string
+          content: string
+          is_read?: boolean
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          conversation_id?: string
+          sender_id?: string
+          content?: string
+          is_read?: boolean
+          read_at?: string | null
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -269,3 +339,5 @@ export type Subscription = Tables<'subscriptions'>
 export type Post = Tables<'posts'>
 export type PostLike = Tables<'post_likes'>
 export type Category = Tables<'categories'>
+export type Conversation = Tables<'conversations'>
+export type Message = Tables<'messages'>

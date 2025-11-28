@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
@@ -9,28 +9,46 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 
 export function LoginForm() {
   const navigate = useNavigate()
-  const { signIn } = useAuth()
+  const { signIn, user, profile, isLoading: authLoading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [loginAttempted, setLoginAttempted] = useState(false)
+
+  // Redirect when profile is loaded after login
+  useEffect(() => {
+    if (loginAttempted && user && profile && !authLoading) {
+      // Redirect based on role
+      if (profile.role === 'admin') {
+        navigate('/admin')
+      } else if (profile.role === 'creator') {
+        navigate('/dashboard')
+      } else {
+        navigate('/my-account')
+      }
+    }
+  }, [loginAttempted, user, profile, authLoading, navigate])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError(null)
     setIsLoading(true)
+    setLoginAttempted(false)
 
     try {
       const { error } = await signIn(email, password)
 
       if (error) {
         setError(error.message)
+        setIsLoading(false)
       } else {
-        navigate('/')
+        // Mark that login was attempted - useEffect will handle redirect
+        setLoginAttempted(true)
+        // Keep loading state until redirect happens
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again.')
-    } finally {
       setIsLoading(false)
     }
   }

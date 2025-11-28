@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Menu, X, LogOut, Settings, LayoutDashboard } from 'lucide-react'
+import { Menu, X, LogOut, Settings, LayoutDashboard, User, Shield, Heart } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
+import { NotificationDropdown } from './NotificationDropdown'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,48 +56,66 @@ export function Navbar() {
           </nav>
 
           {/* Auth Section */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             {isLoading ? (
               <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
             ) : user && profile ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={profile.avatar_url ?? undefined} alt={profile.full_name ?? 'User'} />
-                      <AvatarFallback>{getInitials(profile.full_name ?? 'User')}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium text-sm">{profile.full_name}</p>
-                      <p className="w-[200px] truncate text-xs text-muted-foreground">
-                        {profile.email}
-                      </p>
+              <>
+                {/* Notifications */}
+                <NotificationDropdown />
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={profile.avatar_url ?? undefined} alt={profile.full_name ?? 'User'} />
+                        <AvatarFallback>{getInitials(profile.full_name ?? 'User')}</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium text-sm">{profile.full_name}</p>
+                        <p className="w-[200px] truncate text-xs text-muted-foreground">
+                          {profile.email}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  {profile.role === 'creator' && (
-                    <>
+                    <DropdownMenuSeparator />
+                    {/* Role-specific dashboard links */}
+                    {profile.role === 'admin' && (
+                      <DropdownMenuItem onClick={() => navigate('/admin')}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Portal
+                      </DropdownMenuItem>
+                    )}
+                    {profile.role === 'creator' && (
                       <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                         <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Dashboard
+                        Creator Dashboard
                       </DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuItem onClick={() => navigate('/settings')}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Log out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    )}
+                    <DropdownMenuItem onClick={() => navigate('/my-account')}>
+                      <Heart className="mr-2 h-4 w-4" />
+                      My Subscriptions
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate(
+                      profile.role === 'creator' ? '/dashboard/settings' :
+                      profile.role === 'admin' ? '/admin/settings' :
+                      '/my-account/settings'
+                    )}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             ) : (
               <div className="hidden md:flex items-center space-x-2">
                 <Button variant="ghost" onClick={() => navigate('/login')}>

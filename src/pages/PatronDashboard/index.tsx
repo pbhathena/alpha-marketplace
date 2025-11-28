@@ -3,28 +3,28 @@ import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   LayoutDashboard,
-  FileText,
-  Settings,
   CreditCard,
+  MessageCircle,
+  Settings,
   LogOut,
-  BarChart3
+  Heart
 } from 'lucide-react'
 
-export default function CreatorDashboard() {
-  const { user, profile, creatorProfile, isCreator, signOut } = useAuth()
+export default function PatronDashboard() {
+  const { user, profile, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
-  // Redirect non-creators
   useEffect(() => {
-    if (!isCreator && profile) {
-      navigate('/become-creator')
+    if (!user && !profile) {
+      navigate('/login')
     }
-  }, [isCreator, profile, navigate])
+  }, [user, profile, navigate])
 
-  if (!user || !isCreator || !creatorProfile) {
+  if (!user || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -36,18 +36,28 @@ export default function CreatorDashboard() {
   }
 
   const navItems = [
-    { path: '/dashboard', label: 'Overview', icon: LayoutDashboard },
-    { path: '/dashboard/posts', label: 'Posts', icon: FileText },
-    { path: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
-    { path: '/dashboard/settings', label: 'Settings', icon: Settings },
-    { path: '/dashboard/stripe-setup', label: 'Stripe', icon: CreditCard },
+    { path: '/my-account', label: 'Overview', icon: LayoutDashboard },
+    { path: '/my-account/subscriptions', label: 'My Subscriptions', icon: Heart },
+    { path: '/my-account/messages', label: 'Messages', icon: MessageCircle },
+    { path: '/my-account/billing', label: 'Billing', icon: CreditCard },
+    { path: '/my-account/settings', label: 'Settings', icon: Settings },
   ]
 
   const isActive = (path: string) => {
-    if (path === '/dashboard') {
-      return location.pathname === '/dashboard'
+    if (path === '/my-account') {
+      return location.pathname === '/my-account'
     }
     return location.pathname.startsWith(path)
+  }
+
+  const getInitials = (name: string | null) => {
+    if (!name) return '?'
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
   }
 
   return (
@@ -59,18 +69,17 @@ export default function CreatorDashboard() {
             <div className="flex items-center gap-2 md:gap-4">
               <Link to="/" className="text-xl md:text-2xl font-bold text-primary">Alpha</Link>
               <span className="text-muted-foreground hidden md:inline">/</span>
-              <h1 className="text-lg md:text-xl font-semibold">Dashboard</h1>
-              {!creatorProfile.stripe_onboarding_complete && (
-                <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full hidden md:inline">
-                  Stripe Setup Required
-                </span>
-              )}
+              <h1 className="text-lg md:text-xl font-semibold">My Account</h1>
             </div>
             <div className="flex items-center gap-2 md:gap-4">
               <div className="text-right hidden md:block">
-                <p className="text-sm font-medium">@{profile?.username || 'user'}</p>
-                <p className="text-xs text-muted-foreground">{profile?.email}</p>
+                <p className="text-sm font-medium">{profile.full_name || profile.username}</p>
+                <p className="text-xs text-muted-foreground">{profile.email}</p>
               </div>
+              <Avatar className="h-8 w-8 md:h-10 md:w-10">
+                <AvatarImage src={profile.avatar_url || undefined} />
+                <AvatarFallback>{getInitials(profile.full_name)}</AvatarFallback>
+              </Avatar>
               <Button variant="ghost" size="icon" onClick={signOut}>
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -84,20 +93,14 @@ export default function CreatorDashboard() {
           {/* Sidebar */}
           <aside className="col-span-12 md:col-span-3">
             <Card className="p-4">
-              {/* Stats Summary */}
-              <div className="mb-6 pb-6 border-b">
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase">Subscribers</p>
-                    <p className="text-2xl font-bold">{creatorProfile.subscriber_count}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase">Monthly Price</p>
-                    <p className="text-2xl font-bold">
-                      ${(creatorProfile.subscription_price_cents / 100).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
+              {/* User Profile Summary */}
+              <div className="mb-6 pb-6 border-b text-center">
+                <Avatar className="h-20 w-20 mx-auto mb-3">
+                  <AvatarImage src={profile.avatar_url || undefined} />
+                  <AvatarFallback className="text-2xl">{getInitials(profile.full_name)}</AvatarFallback>
+                </Avatar>
+                <h3 className="font-semibold">{profile.full_name || profile.username}</h3>
+                <p className="text-sm text-muted-foreground">@{profile.username}</p>
               </div>
 
               {/* Navigation */}
@@ -120,14 +123,16 @@ export default function CreatorDashboard() {
                 })}
               </nav>
 
-              {/* Public Profile Link */}
-              <div className="mt-6 pt-6 border-t">
-                <Link to={`/@${profile?.username || ''}`}>
-                  <Button variant="outline" className="w-full">
-                    View Public Profile
-                  </Button>
-                </Link>
-              </div>
+              {/* Become a Creator CTA */}
+              {profile.role !== 'creator' && (
+                <div className="mt-6 pt-6 border-t">
+                  <Link to="/become-creator">
+                    <Button variant="outline" className="w-full">
+                      Become a Creator
+                    </Button>
+                  </Link>
+                </div>
+              )}
             </Card>
           </aside>
 
